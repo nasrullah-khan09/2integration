@@ -1,12 +1,27 @@
-resource "local_file" "my_pet" {
-  filename = "pets.txt"
-  content = "My cat name is ${random_pet.petname.id}"
+resource "aws_iam_user" "Admin-user" {
+  name = "lucy"
+  tags = {
+    "description" = "Technical Team Lead"
+  }
 }
-resource "random_pet" "petname" {
-  prefix = "Mr"
-  separator = "."
-  length = "1"
+resource "aws_iam_policy" "adminuser" {
+  name   = "AdminUsers"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "1234567890",
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
 }
-output "pet_name" {
-  value = random_pet.petname.id
+EOF
+}
+
+resource "aws_iam_user_policy_attachment" "lucy-admin-access" {
+  user       = aws_iam_user.Admin-user.name
+  policy_arn = aws_iam_policy.adminuser.arn
 }
